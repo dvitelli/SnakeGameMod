@@ -65,7 +65,7 @@ void move() {
 		//increment snake
 		snake_length++;
 
-		if (delay > 0.05) {
+		if (delay > 0.05) { //speeds up game on fruit eat until a point where its not fun
 			delay -= .005;
 		}
 
@@ -133,7 +133,7 @@ void moveTwo() {
 		//increment snake
 		snake_two_length++;
 
-		if (delayTwo > .05) {
+		if (delayTwo > .05) {//speeds up game on fruit eat until a point where its not fun
 			delayTwo -= .005;
 		}
 	
@@ -177,11 +177,12 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(w, h), "Snake Game");
 
 	//Textures load an image into the GPU Memory
-	sf::Texture t1, t2, t3, t4;
+	sf::Texture t1, t2, t3, t4, t5;
 	t1.loadFromFile("images/white.png");
 	t2.loadFromFile("images/red.png");
 	t3.loadFromFile("images/fruit.png");
 	t4.loadFromFile("images/green.png");//second snake color
+	t5.loadFromFile("images/danger.png");//danger icon
 
 	//Sprite has physical dimmensions that can be set in 
 	//coordinate system, setPosition(x,y), and drawn on screen
@@ -189,6 +190,7 @@ int main()
 	sf::Sprite sprite2(t2);
 	sf::Sprite sprite3(t3);
 	sf::Sprite sprite4(t4); //second snake for multiplayer
+	sf::Sprite sprite5(t5);// danger icon
 
 	//***NEW*** initially place food somewhere on screen
 	food.x = 10;
@@ -244,9 +246,9 @@ int main()
 			moveTwo();    //move Snake two sprite forward
 			snakeTwo = false;
 		}
-		
-		
-		
+
+
+
 		/*****************
 		//Draw in window
 		*****************/
@@ -255,16 +257,36 @@ int main()
 		//NOTE: Order matters as we will draw over items listed first. 
 		//Hence the background should be the first thing you will always do
 		//1st: Draw Background first
-		for (int i = 0; i < num_horzBox; i++)
-		{
-			for (int j = 0; j < num_vertBox; j++)
+
+		if (snake_length > 10 || snake_two_length > 10) {
+
+			window.clear();
+
+			for (int i = 0; i < num_horzBox; i++)
 			{
-				//Set position of sprite1 one at a time
-				sprite1.setPosition(i*size, j*size);
-				//Draw sprite1 but, do not show it on screen. 
-				window.draw(sprite1);
+				for (int j = 0; j < num_vertBox; j++)
+				{
+					//Set position of sprite1 one at a time
+					sprite5.setPosition(i*size, j*size);
+					//Draw sprite1 but, do not show it on screen. 
+					window.draw(sprite5);
+				}
 			}
 		}
+
+		else {
+			for (int i = 0; i < num_horzBox; i++)
+			{
+				for (int j = 0; j < num_vertBox; j++)
+				{
+					//Set position of sprite1 one at a time
+					sprite1.setPosition(i*size, j*size);
+					//Draw sprite1 but, do not show it on screen. 
+					window.draw(sprite1);
+				}
+			}
+		}
+
 
 		// Then Draw second snake otherwise background will be drawn over snake if order was reversed with background
 		for (int i = 0; i < snake_length; i++)
@@ -275,13 +297,29 @@ int main()
 			window.draw(sprite2);
 		}
 
+		/*bool firstSnakeTwo = false;
+
+		if (firstSnakeTwo == false) {
 		for (int i = 0; i < snake_two_length; i++)
 		{
 			//position sprite4 one at a time
-			sprite4.setPosition(s2[i].x*size, s2[i].y*size);
+			sprite4.setPosition(s2[i].x*size+304, s2[i].y*size);
 			//Draw sprite4 one at a time by drawing over background
 			window.draw(sprite4);
+			firstSnakeTwo = true;
 		}
+
+	}*/
+
+		
+			for (int i = 0; i < snake_two_length; i++)
+			{
+				//position sprite4 one at a time
+				sprite4.setPosition(s2[i].x*size, s2[i].y*size);
+				//Draw sprite4 one at a time by drawing over background
+				window.draw(sprite4);
+			}
+	
 
 		//***NEW*** 3rd: Draw Fruit
 		sprite3.setPosition(food.x*size, food.y*size);
@@ -290,5 +328,6 @@ int main()
 		//Show everything we have drawn on the screen
 		window.display();
 	}
+
 	return 0;
 }
